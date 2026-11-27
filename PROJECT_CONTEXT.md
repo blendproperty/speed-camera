@@ -2,6 +2,14 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 public HTTPS cutover preparation
+
+- **Implementation.** Added a VPS administrator cutover script for the existing Traefik configuration. It switches the web origin to HTTPS and checks the public certificate, health, sign-in origin and unauthenticated export restriction. The existing private configuration is restored if verification fails.
+- **Testing.** Shell syntax and Compose configuration checked. VPS checkpoint confirmed private health and host DNS. The proposed public hostname did not yet present a trusted certificate.
+- **Commit, push and merge.** Cutover preparation is promoted directly to `main` with this context. No pull request or runtime application build is needed for the configuration change.
+- **Deployment and configuration.** Public cutover requires interactive sudo on the VPS because the available SSH account has no Docker socket access. The private pilot is running. The cutover does not activate HikCentral polling.
+- **Live production verification.** Public HTTPS and real operator sign-in are pending. Camera capture validation and the existing operator acceptance, backup and evidence policy gates remain open.
+
 ## 2026-11-27 VPS pilot activation
 
 - **Implementation.** No application changes. The pilot uses the previously validated implementation at `66a223ce0242ede374312127bbef8ed7ba1cfdf8`.
