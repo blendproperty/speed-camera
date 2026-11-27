@@ -2,6 +2,15 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 approved HikCentral DNS name
+
+- **Implementation.** Updated the administrator handoff with the approved hostname, proposed separate Artemis listener, existing EMS origin, VPS source address and exact read paths.
+- **Testing.** Both authoritative Hostinger nameservers returned the new A record, `41.169.72.97` at TTL 300. The existing EMS DNS record still resolves to its VPS and its public health returned HTTP 200. Midpoint health returned OK.
+- **Commit and push.** This handoff and evidence are promoted to `main` and staged on the VPS checkout.
+- **Merge.** Direct fast-forward promotion of the documentation.
+- **Deployment and configuration.** Added only the new `hikcentral` A record in the Hostinger zone. No DNS replacement, HikCentral server change, EMS configuration change or portal rebuild took place. Listener port 4443 is proposed pending platform administrator confirmation.
+- **Live production verification.** DNS is live. The separate TLS listener, certificate, network restriction, partner scope, signed lookup and EMS source-import verification remain open. Existing ticket, capture, evidence and acceptance gates remain open.
+
 ## 2026-11-27 EMS-safe hostname preparation and demonstration notice
 
 - **Implementation.** Updated the HikCentral runbook to verify a separate Artemis HTTPS endpoint first, with a scheduled shared-listener fallback and EMS import verification. Produced a local A4 showcase notice with fictional data and a generated camera image. No demonstration records were written to the portal.
