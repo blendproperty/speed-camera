@@ -1,5 +1,20 @@
 # Connect the Midpoint vehicle register
 
+## Reuse existing port 443 without changing EMS
+
+For this HikCentral listener only, the portal can authenticate the existing certificate by its SHA-256 fingerprint. Ask the HikCentral server admin for the fingerprint of the actual HTTPS leaf certificate bound to port 443, obtained from the server or its certificate store. Treat the expected fingerprint as an independent check. A fingerprint copied from the same untrusted network response would not establish trust.
+
+After the administrator confirms it, run this interactively on the VPS. The setup compares the expected fingerprint with the currently presented certificate before it asks for credentials.
+
+```sh
+cd ~/speed-camera
+sudo python3 deploy/configure-register-443.py
+sudo docker compose -f compose.yaml -f compose.traefik.yaml up -d --build --no-deps --wait web
+sudo docker compose -f compose.yaml -f compose.traefik.yaml exec web node scripts/verify-register.mjs lookup
+```
+
+Enter the **Integration Partner Key** as AppKey, the **Integration Partner Secret** as AppSecret, and the actual vehicle group ID. The key and secret prompts hide input. The script writes the configuration to `secrets/operators/hikcentral-register.json`, mode 600, readable by the portal service through its read-only mount. No change to the HikCentral listener or EMS configuration is needed. The portal verifies the exact certificate on every new connection. If the certificate rotates, independently confirm the replacement fingerprint and rerun the setup.
+
 ## Certificate
 
 The EMS feed and Midpoint currently reach the same listener. The existing certificate is self-signed, names `127.0.0.1`, and has no Subject Alternative Name for the VPS-facing address.

@@ -2,6 +2,15 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 existing HikCentral 443 connection
+
+- **Implementation.** Added portal-only certificate pinning for the existing Artemis HTTPS listener and an interactive VPS setup script. The setup requires an independently verified SHA-256 fingerprint, then saves the dedicated partner credentials and exact public leaf certificate in a mode-600 file inside the portal's read-only operator mount. Standard TLS trust remains available for a named gateway.
+- **Testing.** The unit suite, Next.js build, Compose validation and isolated Docker smoke passed. HTTPS fixtures verified that a pinned peer works, wrong destination, redirect and replacement certificate are rejected, and the replacement server receives no HTTP data. An unsigned VPS diagnostic reached HTTP 200 on the existing listener and Artemis search path. The listener closes HEAD requests, so the readiness verifier uses an unsigned GET for TLS preflight.
+- **Commit and push.** Setup, application change and evidence are promoted to `main` and staged in the VPS checkout.
+- **Merge.** Direct fast-forward promotion to `main`.
+- **Deployment and configuration.** No EMS, HikCentral, DNS or live portal runtime changes. VPS setup requires the fingerprint confirmed independently from the HikCentral host, the scoped partner key and secret, group ID, and the privileged web rebuild.
+- **Live production verification.** Unsigned protocol compatibility on 443 is confirmed. The trusted fingerprint, credentials, real signed vehicle lookup, make availability, operator acceptance and EMS source-import verification remain open.
+
 ## 2026-11-27 Speed-Cameras partner permission readback
 
 - **Implementation.** Read-only inspection of the new HikCentral partner. No code changes were required.

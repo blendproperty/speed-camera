@@ -39,6 +39,7 @@ services:
       HIK_REGISTER_APP_KEY: ${HIK_REGISTER_APP_KEY:-}
       HIK_REGISTER_APP_SECRET: ${HIK_REGISTER_APP_SECRET:-}
       HIK_REGISTER_GROUP_ID: ${HIK_REGISTER_GROUP_ID:-}
+      HIK_REGISTER_CONFIG_FILE: /operators/hikcentral-register.json
       NODE_EXTRA_CA_CERTS: ${HIK_REGISTER_CA:-}
     volumes:
       - ./secrets/operators:/operators:ro

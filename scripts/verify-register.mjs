@@ -1,8 +1,7 @@
 import { createInterface } from 'node:readline';
 import { hikcentral } from '../lib/hikcentral.mjs';
+import { registerConfig } from '../lib/register-config.mjs';
 
-const { HIK_REGISTER_ORIGIN: origin, HIK_REGISTER_APP_KEY: key,
-  HIK_REGISTER_APP_SECRET: secret, HIK_REGISTER_GROUP_ID: group } = process.env;
 process.exitCode = await verify(process.argv[2]);
 
 async function verify(mode) {
@@ -11,23 +10,28 @@ async function verify(mode) {
     return 2;
   }
   let url;
+  let config;
   try {
+    config = await registerConfig();
+    const { origin } = config;
     url = new URL(origin);
     if (url.protocol !== 'https:' || url.username || url.password ||
         url.pathname !== '/' || url.search || url.hash) throw new Error();
   } catch {
-    console.error('Set HIK_REGISTER_ORIGIN to the HTTPS gateway origin.');
+    console.error('Check the HTTPS gateway origin and pinned certificate configuration.');
     return 2;
   }
   try {
-    const response = await fetch(url, { method: 'HEAD', redirect: 'manual', signal: AbortSignal.timeout(8000) });
+    // This HikCentral listener closes HEAD requests even when its TLS handshake succeeds.
+    const response = await config.send(url, { method: 'GET', redirect: 'manual', signal: AbortSignal.timeout(8000) });
+    await response.body?.cancel();
     console.log('Gateway TLS verified. HTTP ' + response.status + '.');
   } catch {
     console.error('Gateway TLS or connectivity check failed.');
     return 1;
   }
   if (mode === 'tls') return 0;
-  if (!key || !secret || !group) {
+  if (!config.key || !config.secret || !config.group) {
     console.error('Set the scoped register key, secret and vehicle group ID.');
     return 2;
   }
@@ -48,7 +52,7 @@ async function verify(mode) {
     return 2;
   }
   try {
-    const result = await hikcentral({ origin, key, secret }).registeredVehicle(plate.trim(), captured, group);
+    const result = await hikcentral(config).registeredVehicle(plate.trim(), captured, config.group);
     if (result.status !== 'match') {
       console.error('Register check: ' + result.status + '.');
       return 1;

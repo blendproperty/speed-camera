@@ -1,4 +1,5 @@
 import { hikcentral } from '../../../lib/hikcentral.mjs';
+import { registerConfig } from '../../../lib/register-config.mjs';
 
 const messages = {
   none: 'No exact plate match was returned for the configured vehicle group.',
@@ -9,16 +10,16 @@ const messages = {
 };
 
 export default async function VehicleRegister({ ticket, lookup }) {
-  const { HIK_REGISTER_ORIGIN: origin, HIK_REGISTER_APP_KEY: key,
-    HIK_REGISTER_APP_SECRET: secret, HIK_REGISTER_GROUP_ID: group } = process.env;
-  const configured = Boolean(origin && key && secret && group);
+  let configured = false;
   let result;
-  if (lookup && configured) {
-    try {
-      result = await hikcentral({ origin, key, secret }).registeredVehicle(ticket.plate, ticket.captured_at, group);
-    } catch {
-      result = { status: 'unavailable' };
+  try {
+    const config = await registerConfig();
+    configured = Boolean(config.origin && config.key && config.secret && config.group);
+    if (lookup && configured) {
+      result = await hikcentral(config).registeredVehicle(ticket.plate, ticket.captured_at, config.group);
     }
+  } catch {
+    result = { status: 'unavailable' };
   }
   return <section className="panel section no-print">
     <header className="heading vehicle-register-heading">
@@ -28,7 +29,7 @@ export default async function VehicleRegister({ ticket, lookup }) {
         <button className="secondary">{lookup ? 'Check again' : 'Look up plate'}</button>
       </form>}
     </header>
-    {!configured && <p className="notice">Vehicle register connection is awaiting configuration.</p>}
+    {!configured && !result && <p className="notice">Vehicle register connection is awaiting configuration.</p>}
     {result?.status === 'match' && <>
       <dl className="camera-status">
         <div><dt>Registered owner</dt><dd>{result.owner ?? 'Not supplied'}</dd></div>
