@@ -2,6 +2,15 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 ungrouped plate lookup check
+
+- **Implementation.** Read-only diagnosis. The portal continues to require a vehicle group selector.
+- **Testing.** Registered Vehicle showed 480 records and List Management showed zero lists. The operator's signed group-list requests returned code 0 with total 0. In the live gateway debugger, a signed plate-filtered search for an existing ungrouped vehicle using an empty `vehicleGroupIndexCode` returned code 2 with a group parameter error. No plate, credential or owner details were recorded here.
+- **Commit and push.** Evidence is promoted to `main` and staged in the VPS checkout.
+- **Merge.** Direct fast-forward promotion of documentation.
+- **Deployment and configuration.** No vehicle, list, partner, certificate or portal configuration changes.
+- **Live production verification.** The blank group value is rejected on this installation. A supported ungrouped selector or an approved named-group pilot remains open, along with independent certificate verification and a successful signed portal lookup.
+
 ## 2026-11-27 existing HikCentral 443 connection
 
 - **Implementation.** Added portal-only certificate pinning for the existing Artemis HTTPS listener and an interactive VPS setup script. The setup requires an independently verified SHA-256 fingerprint, then saves the dedicated partner credentials and exact public leaf certificate in a mode-600 file inside the portal's read-only operator mount. Standard TLS trust remains available for a named gateway.
