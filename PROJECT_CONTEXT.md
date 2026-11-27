@@ -2,6 +2,15 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 register TLS deployment readback
+
+- **Implementation.** No application changes. The staged portal-only pinned HTTPS connection was activated by the VPS administrator.
+- **Testing.** The administrator's transcript shows the web image built, the web container became healthy, and the in-container register verifier reached HikCentral with pinned TLS and HTTP 200. The transcript ends at the test input prompt. Independent public health checks returned OK for Midpoint and EMS.
+- **Commit and push.** Application implementation `1fbaaf0` was staged previously. This documentation-only update records the administrator's deployment evidence.
+- **Merge.** No application merge in this follow-up.
+- **Deployment and configuration.** The VPS image `26eacea1c519` was built and started. No HikCentral shared listener or EMS configuration change is evidenced.
+- **Live production verification.** TLS is verified. The signed plate result and operator verification from a draft ticket are pending. The latest EMS import succeeded before deployment on run `19940`; the next scheduled post-change import remains open.
+
 ## 2026-11-27 one-vehicle HikCentral group pilot
 
 - **Implementation.** Created the ordinary **Midpoint Speed Camera Pilot** list and assigned only the approved test vehicle. No application code changed.
