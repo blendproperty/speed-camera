@@ -2,6 +2,14 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 public HTTPS verified
+
+- **Implementation and testing.** No application code changed during verification. The public sign-in page rendered successfully. A same-origin form submission with empty credentials returned the expected HTTP 303 to the login error page, and anonymous CSV export returned HTTP 401.
+- **Commit and push.** The VPS cutover ran from `main` at `d8ea251`. This follow-up records live results and changes documentation only.
+- **Merge.** No application merge was needed for the cutover.
+- **Deployment and configuration.** The administrator started the Traefik cutover. The shell was interrupted during the early certificate checks, after the public web container had started. Subsequent independent checks confirmed the public route stayed active and the previous VPS loopback listener was no longer accepting connections.
+- **Live production verification.** `https://speed-camera.srv938083.hstgr.cloud` presents a trusted Let's Encrypt certificate for the correct name, health returns HTTP 200 with `{"status":"ok"}`, and HTTP redirects to HTTPS. Successful sign-in with a named operator and operator acceptance remain unverified. HikCentral polling, genuine capture and evidence verification, production backup restore, and the evidence policy remain open.
+
 ## 2026-11-27 public HTTPS cutover preparation
 
 - **Implementation.** Added a VPS administrator cutover script for the existing Traefik configuration. It switches the web origin to HTTPS and checks the public certificate, health, sign-in origin and unauthenticated export restriction. The existing private configuration is restored if verification fails.
