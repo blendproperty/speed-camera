@@ -2,6 +2,15 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 browser sign-in origin fix
+
+- **Implementation.** Use the `same-origin` referrer policy so a native form POST to this app includes its own origin. The previous `no-referrer` policy caused the browser to send a null origin. The app continues to require the exact configured origin and CSRF tokens on authenticated actions.
+- **Testing.** Reproduced the public error by clicking Sign in in Chromium. After rebuilding the isolated Docker stack, a native browser form signed in with a disposable account and opened Capture review. The native sign-out form returned to login. Unit tests and the Docker smoke test passed, including rejection of foreign and null Origins.
+- **Commit and push.** The fix and context are promoted to `main` and staged in the VPS source checkout.
+- **Merge.** Direct fast-forward promotion to `main`.
+- **Deployment and configuration.** The existing public Traefik web container needs a privileged rebuild and recreation. The available SSH session requires interactive sudo for Docker.
+- **Live production verification.** The pre-fix browser failure is verified. Public native sign-in with the corrected image and operator acceptance remain pending. The prior HikCentral, capture and evidence, backup and policy gates remain open.
+
 ## 2026-11-27 public HTTPS verified
 
 - **Implementation and testing.** No application code changed during verification. The public sign-in page rendered successfully. A same-origin form submission with empty credentials returned the expected HTTP 303 to the login error page, and anonymous CSV export returned HTTP 401.

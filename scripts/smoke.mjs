@@ -15,9 +15,11 @@ const form = (path, data, cookie, requestOrigin = origin) => call(path, {
 
 try {
   assert.equal((await call('/api/health')).status, 200);
+  assert.equal((await call('/login')).headers.get('referrer-policy'), 'same-origin');
   assert.equal((await call('/api/export')).status, 401);
   assert.equal((await call('/api/evidence/1')).status, 401);
   assert.equal((await form('/api/auth', { username: 'smoke', password }, null, 'https://invalid.example')).status, 403);
+  assert.equal((await form('/api/auth', { username: 'smoke', password }, null, 'null')).status, 403);
   const login = await form('/api/auth', { username: 'smoke', password });
   assert.equal(login.status, 303);
   assert.equal(new URL(login.headers.get('location')).pathname, '/');
