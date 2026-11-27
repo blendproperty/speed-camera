@@ -44,7 +44,9 @@ This replacement uses the same PostgreSQL volume and removes the pilot’s loopb
 
 ## HikCentral connection
 
-Leave polling off until the gateway credentials and camera IDs are ready. Store secrets only in the private `.env` on the VPS. The web container and PostgreSQL do not receive the HikCentral AppSecret.
+Leave polling off until the gateway credentials and camera IDs are ready. Store secrets only in the private `.env` on the VPS. The capture-worker credentials are separate from the web credentials used by vehicle lookup.
+
+For draft ticket lookups, configure `HIK_REGISTER_ORIGIN`, `HIK_REGISTER_APP_KEY`, `HIK_REGISTER_APP_SECRET` and `HIK_REGISTER_GROUP_ID` in the VPS `.env`. Use a read-only key authorized for the advanced vehicle search and, where available, the vehicle detail lookup. The configured group must cover the cars the operator needs to check, including ungrouped vehicles if the gateway exposes them under a group code. Use a valid HTTPS certificate matching the origin. If it chains to a private CA, put the public CA PEM in the existing `secrets/operators` bind mount, ensure UID 1000 can read it, and set `HIK_REGISTER_CA=/operators/hikcentral-ca.pem`. Recreate the web container after configuration. **Look up plate** shows only an exact match effective when the incident was captured. If the gateway omits make or returns only an unverified brand code, the portal displays **Not supplied**. The lookup leaves recipient confirmation to the operator and does not save the lookup result or display owner IDs or phone numbers.
 
 - Set `HIK_ORIGIN` to the gateway HTTPS origin, `HIK_APP_KEY` and `HIK_APP_SECRET` to authorized read-only Artemis credentials, and `HIK_CONTAINER_CA` if a private CA bundle is required. Use a CA and hostname that the gateway certificate validates.
 - Set `HIK_SYNC_ENABLED=true` and start the worker with `docker compose -f compose.yaml -f compose.traefik.yaml --profile sync up -d --build`. Use `compose.local.yaml` in place of the Traefik override for the private pilot.

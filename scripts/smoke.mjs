@@ -72,7 +72,15 @@ try {
   const draftNotice = await (await call(ticketPath, { headers: { cookie } })).text();
   assert.match(draftNotice, /Draft · For internal review/);
   assert.match(draftNotice, /Site speeding notice/);
+  assert.match(draftNotice, /HikCentral vehicle register/);
   assert.match(draftNotice, new RegExp('/api/evidence/' + pending.id));
+  if (process.env.SMOKE_REGISTER === 'fixture') {
+    const lookup = await (await call(ticketPath + '?vehicle=1', { headers: { cookie } })).text();
+    assert.match(lookup, /Fixture Registered Owner/);
+    assert.match(lookup, /Fixture Make/);
+    assert.match(lookup, /Silver/);
+    assert.doesNotMatch(lookup, /fixture-private-field/);
+  }
   const ticket = { id: ticketId, csrf, recipient: 'Synthetic recipient', rule: 'Test site rule',
     noticeNote: 'Synthetic notice', operation: 'finalize' };
   assert.equal((await form('/api/actions/ticket-update', ticket, cookie)).status, 400);

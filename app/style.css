@@ -92,6 +92,7 @@ summary { cursor: pointer; color: var(--accent); }
 .notice-footer { margin-top: 14px; font-size: .85rem; break-inside: avoid; }
 .notice-copy { white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom: 7px; }
 .ticket-editor { max-width: 570px; margin: 14px 0; }
+.vehicle-register-heading { margin-bottom: 0; }
 .ticket-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
 .status.finalized { background: #d5efe5; color: #124b3c; }
 @media print {

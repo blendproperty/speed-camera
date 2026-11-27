@@ -2,6 +2,15 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 HikCentral vehicle register lookup
+
+- **Implementation.** Draft tickets can query the HikCentral advanced vehicle search on demand. The portal requires an exact normalized plate match and one effective registration at the capture time. It displays registered owner, colour and a readable make if the search or corroborating detail response provides one. It discards owner IDs and phone numbers, and leaves recipient confirmation to the operator. Register credentials are scoped separately from capture polling.
+- **Testing.** Seven unit tests passed, including HTTP signing, exact match, date constraints, ambiguous and incomplete response handling, and missing or mismatched make. Docker build and the existing PostgreSQL workflow passed. A second Docker smoke test used a controlled HTTPS HikCentral fixture and verified owner, make and colour appeared on a draft while the private fixture value stayed out of the HTML.
+- **Commit and push.** Lookup and evidence are promoted to `main` and staged in the VPS checkout.
+- **Merge.** Direct fast-forward promotion to `main`.
+- **Deployment and configuration.** The earlier ticketing deployment responds at `/tickets` with the expected anonymous redirect. Live lookup requires a verified HTTPS HikCentral origin, read-only application credentials, the effective vehicle group ID and a privileged rebuild of the portal container. Store credentials in the private VPS environment.
+- **Live production verification.** No live registered vehicle has been queried for this change. Midpoint's exact API payload, group scope, make availability and an operator's real plate lookup remain open. Preserve the capture, evidence, backup, site policy and operator acceptance gates.
+
 ## 2026-11-27 speed ticket register and printable notices
 
 - **Implementation.** Added an authenticated Speed tickets register, one ticket per eligible approved capture, generated references, a printable A4 site notice, and audited draft, finalize and void actions. The notice uses the approved capture and protected camera image, with recipient and applicable site rule confirmed by an operator. The document is a Midpoint site notice. Municipal statutory wording, payment and delivery are outside the current workflow.

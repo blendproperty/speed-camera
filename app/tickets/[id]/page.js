@@ -5,8 +5,9 @@ import { database } from '../../../lib/db.mjs';
 import { formatTime, validId } from '../../../lib/operations.mjs';
 import { ticketReference, ticketStatuses } from '../../../lib/tickets.mjs';
 import PrintButton from './print-button.js';
+import VehicleRegister from './vehicle-register.js';
 
-export default async function Ticket({ params }) {
+export default async function Ticket({ params, searchParams }) {
   const session = await operator();
   const { id } = await params;
   if (!validId(id)) notFound();
@@ -18,6 +19,7 @@ export default async function Ticket({ params }) {
   const reference = ticketReference(id);
   const above = (Number(t.speed_kmh) - Number(t.limit_kmh)).toFixed(1);
   const evidence = '/api/evidence/' + t.capture_id;
+  const query = await searchParams;
   return <Shell current="/tickets" session={session}>
     <div className="heading no-print"><Link href="/tickets">Back to speed tickets</Link><PrintButton /></div>
     <article className="notice-sheet" aria-labelledby="notice-title">
@@ -59,6 +61,7 @@ export default async function Ticket({ params }) {
         {t.finalized_at && <p>Finalized by {t.finalized_by} on {formatTime(t.finalized_at)} SAST.</p>}
       </footer>
     </article>
+    {t.status === 'draft' && <VehicleRegister ticket={t} lookup={query.vehicle === '1'} />}
     <section className="panel section no-print">
       <h2>Ticket details</h2>
       <p>Created by {t.created_by}. Capture reviewed by {t.reviewed_by} on {formatTime(t.reviewed_at)} SAST.</p>
