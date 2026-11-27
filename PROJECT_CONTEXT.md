@@ -2,6 +2,15 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 VPS pilot activation
+
+- **Implementation.** No application changes. The pilot uses the previously validated implementation at `66a223ce0242ede374312127bbef8ed7ba1cfdf8`.
+- **Testing.** The administrator's activation transcript shows a successful image build, creation of the pilot operator, and healthy PostgreSQL and web containers. An independent SSH check confirmed health HTTP 200 with `{"status":"ok"}`, login HTTP 200 and anonymous CSV export HTTP 401 on the VPS loopback address.
+- **Commit and push.** Activation used the verified VPS `main` checkout at `57da7e4380410e235609934982a3e6bbfd8e1633`. The activation evidence is recorded in this documentation-only follow-up.
+- **Merge.** No application merge or promotion was needed for activation.
+- **Deployment and configuration.** The VPS administrator ran the pilot installer with sudo. The web service is available through VPS loopback on port 3189. The private pilot uses PostgreSQL and starts with HikCentral sync disabled. The production Traefik route remains pending.
+- **Live pilot verification and open gates.** Loopback availability and the anonymous access restriction were verified. A named operator sign-in, operator acceptance, production backup and restore, approved HTTPS access, evidence policy, and the signed HikCentral connection with a trusted certificate and a genuine Midpoint camera capture remain pending.
+
 ## 2026-11-27 internal pilot implementation
 
 - **Implementation.** Next.js operator console, separate PostgreSQL schema and volume, Docker web and HikCentral worker, and Traefik override following the EMS Entry Tracking deployment pattern. Includes named operator authentication, camera setup and sync status, bounded Artemis polling with per-camera checkpoints and stable IDs, evidence retrieval and hashing, held and review states, reasoned internal decisions, audit history and an approved-only CSV. The EMS reference repository was read at `087dfcb7345e1bc4068f1d49e87485643df6483e`. No EMS changes were needed.
