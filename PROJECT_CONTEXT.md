@@ -2,6 +2,15 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 EMS-safe hostname preparation and demonstration notice
+
+- **Implementation.** Updated the HikCentral runbook to verify a separate Artemis HTTPS endpoint first, with a scheduled shared-listener fallback and EMS import verification. Produced a local A4 showcase notice with fictional data and a generated camera image. No demonstration records were written to the portal.
+- **Testing.** Verified the sample PDF rendered as one A4 page with the demonstration banner, illustrative owner, measurements and generated evidence. The proposed hostname had no DNS answer in the lookup. The EMS and Midpoint public health endpoints returned HTTP 200 before any change.
+- **Commit and push.** The connection guidance and context are promoted to `main`. The showcase PDF is a local handoff artifact, not a deployed feature.
+- **Merge.** Direct fast-forward promotion of the documentation.
+- **Deployment and configuration.** No DNS, certificate, EMS configuration or live portal changes. The HikCentral host administrator and DNS access for the selected name remain required to verify and configure the separate endpoint.
+- **Live production verification.** New hostname, certificate trust, scoped partner and group ID, real lookup and EMS post-change source ingestion remain open. Prior camera, evidence, operator acceptance, backup and policy gates remain open.
+
 ## 2026-11-27 HikCentral live connection preflight
 
 - **Implementation.** Added a runbook with the verified HikCentral 3.0.1 certificate and partner controls, and a verifier that checks TLS before signed lookup and reports field availability without printing owner details.

@@ -2,7 +2,11 @@
 
 ## Certificate
 
-The EMS feed and Midpoint use the same listener. The existing certificate is self-signed, names `127.0.0.1`, and has no Subject Alternative Name for the VPS-facing address. The certificate needs replacement on the HikCentral listener used by Artemis. Plan the change with the HikCentral administrator since the platform can restart and sign out active users.
+The EMS feed and Midpoint currently reach the same listener. The existing certificate is self-signed, names `127.0.0.1`, and has no Subject Alternative Name for the VPS-facing address.
+
+Start by asking the HikCentral host administrator whether the installed deployment supports a separate HTTPS endpoint for Artemis. If it does, dedicate the new hostname and certificate to the additional endpoint while keeping the existing EMS connection intact. Restrict the new endpoint to the VPS source address or private network if the site firewall supports it. Verify that the new endpoint reaches the HikCentral service with authenticated transport on any network hop. Confirm an EMS import and report status before and after the change.
+
+If the HikCentral installation has a single shared certificate and listener, publishing a DNS alias alone still presents that certificate. Plan a shared certificate replacement in a maintenance window, with the current certificate configuration recorded, an administrator able to restore it, and EMS import and report checks ready. Changing the shared transport configuration can restart HikCentral and sign out active users.
 
 1. Choose a DNS name under a domain you control and point it to the HikCentral listener. Obtain a server certificate whose SAN covers that exact name. A private CA is suitable if the VPS trusts its public CA certificate.
 2. In HikCentral, go to **System → Security → Transport Protocol**. Keep **HTTPS** selected and choose **New Certificate**. The server PEM must include the certificate and its private key in HikCentral's required format. Use **Upper-Level Certificate** for any required issuer chain. Keep the server private key with the HikCentral administrator.
