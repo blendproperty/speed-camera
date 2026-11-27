@@ -1,0 +1,29 @@
+services:
+  web:
+    networks: [application, proxy]
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${TRAEFIK_NETWORK:-root_default}
+      - traefik.http.routers.midpoint-speed-camera.rule=Host(`${SPEED_CAMERA_HOST:?Set SPEED_CAMERA_HOST}`)
+      - traefik.http.routers.midpoint-speed-camera.entrypoints=websecure
+      - traefik.http.routers.midpoint-speed-camera.tls=true
+      - traefik.http.routers.midpoint-speed-camera.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-mytlschallenge}
+      - "traefik.http.routers.midpoint-speed-auth.rule=Host(`${SPEED_CAMERA_HOST:?Set SPEED_CAMERA_HOST}`) && Path(`/api/auth`)"
+      - traefik.http.routers.midpoint-speed-auth.entrypoints=websecure
+      - traefik.http.routers.midpoint-speed-auth.tls=true
+      - traefik.http.routers.midpoint-speed-auth.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-mytlschallenge}
+      - traefik.http.routers.midpoint-speed-auth.service=midpoint-speed-camera
+      - traefik.http.routers.midpoint-speed-auth.middlewares=midpoint-speed-login-limit
+      - traefik.http.middlewares.midpoint-speed-login-limit.ratelimit.average=10
+      - traefik.http.middlewares.midpoint-speed-login-limit.ratelimit.period=1m
+      - traefik.http.middlewares.midpoint-speed-login-limit.ratelimit.burst=8
+      - traefik.http.services.midpoint-speed-camera.loadbalancer.server.port=3000
+      - traefik.http.routers.midpoint-speed-camera-http.rule=Host(`${SPEED_CAMERA_HOST:?Set SPEED_CAMERA_HOST}`)
+      - traefik.http.routers.midpoint-speed-camera-http.entrypoints=web
+      - traefik.http.routers.midpoint-speed-camera-http.middlewares=midpoint-speed-https
+      - traefik.http.middlewares.midpoint-speed-https.redirectscheme.scheme=https
+
+networks:
+  proxy:
+    external: true
+    name: ${TRAEFIK_NETWORK:-root_default}

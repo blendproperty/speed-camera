@@ -1,0 +1,67 @@
+name: midpoint-speed-camera
+x-app: &app
+  image: midpoint-speed-camera:${APP_TAG:-local}
+  build: .
+  init: true
+  depends_on:
+    db:
+      condition: service_healthy
+  environment: &database-env
+    DATABASE_URL: postgres://speed_camera:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@db:5432/speed_camera
+  networks: [application]
+
+services:
+  db:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: speed_camera
+      POSTGRES_USER: speed_camera
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes:
+      - database:/var/lib/postgresql/data
+    networks: [application]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U speed_camera -d speed_camera"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+
+  web:
+    <<: *app
+    environment:
+      <<: *database-env
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:?Set PUBLIC_ORIGIN}
+      SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET}
+      OPERATORS_FILE: /operators/operators.json
+      HIK_SYNC_ENABLED: ${HIK_SYNC_ENABLED:-false}
+    volumes:
+      - ./secrets/operators:/operators:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  worker:
+    <<: *app
+    profiles: [sync]
+    environment:
+      <<: *database-env
+      HIK_SYNC_ENABLED: ${HIK_SYNC_ENABLED:-false}
+      HIK_ORIGIN: ${HIK_ORIGIN:-}
+      HIK_APP_KEY: ${HIK_APP_KEY:-}
+      HIK_APP_SECRET: ${HIK_APP_SECRET:-}
+      HIK_SPEED_UNIT: ${HIK_SPEED_UNIT:-}
+      NODE_EXTRA_CA_CERTS: ${HIK_CONTAINER_CA:-}
+    volumes:
+      - ./secrets:/run/speed-camera:ro
+    command: ["node","scripts/worker.mjs"]
+    restart: on-failure:5
+
+volumes:
+  database:
+
+networks:
+  application:
