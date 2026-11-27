@@ -2,6 +2,15 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 signed VPS register lookup verified
+
+- **Implementation.** No application changes. The existing portal verifier and pinned HikCentral connection were exercised inside the running VPS web container.
+- **Testing.** The operator transcript shows gateway TLS verified with HTTP 200 and a signed lookup for the sole approved vehicle in pilot group `1` returning one effective match. Reported fields were `owner, colour`. The query timestamp was selected for register verification, with no real camera capture or issued notice involved.
+- **Commit and push.** Documentation-only evidence is promoted directly to `main` and synchronized to the VPS checkout.
+- **Merge.** No application merge needed.
+- **Deployment and configuration.** The private VPS register configuration is active and the deployed web image is unchanged from the preceding activation. No change to EMS, the shared HikCentral listener, the pilot membership, or the portal code was made during verification.
+- **Live production verification.** The real signed VPS register lookup passed for the pilot vehicle. Both portal and EMS public health returned OK. EMS run `19940` remains the latest successful scheduled import and pre-dates the change. The next scheduled import, a genuine capture and in-portal draft lookup, broader vehicle coverage, make availability and operator acceptance remain open.
+
 ## 2026-11-27 register TLS deployment readback
 
 - **Implementation.** No application changes. The staged portal-only pinned HTTPS connection was activated by the VPS administrator.
