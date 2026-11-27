@@ -2,6 +2,15 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 HikCentral live connection preflight
+
+- **Implementation.** Added a runbook with the verified HikCentral 3.0.1 certificate and partner controls, and a verifier that checks TLS before signed lookup and reports field availability without printing owner details.
+- **Testing.** Reviewed the EMS main source at `087dfcb`. Its saved importer targets the same HikCentral listener and the EMS browser bridge permits TLS errors. A VPS handshake reached that listener and found a self-signed platform certificate for `127.0.0.1` with no SAN. The verifier accepted trusted HTTPS, rejected the HikCentral listener, and reported missing partner configuration correctly. All seven unit tests passed. In the live HikCentral UI, confirmed **Transport Protocol**, **Add Integration Partner**, **Linked User**, and the individual registered-vehicle read permissions. No changes were saved in HikCentral.
+- **Commit and push.** The verifier, runbook and context are promoted to `main` and staged on the VPS.
+- **Merge.** Direct fast-forward promotion to `main`.
+- **Deployment and configuration.** The existing portal is available. Live register activation needs a HikCentral administrator to install a hostname-matched certificate, a dedicated read-only partner, the actual vehicle group code including the ungrouped scope if needed, and privileged VPS configuration and rebuild.
+- **Live production verification.** The gateway TLS failure is confirmed from the VPS. The replacement certificate, scoped partner, real record lookup and make coverage remain unverified. All previous capture, evidence, acceptance and policy gates remain open.
+
 ## 2026-11-27 HikCentral vehicle register lookup
 
 - **Implementation.** Draft tickets can query the HikCentral advanced vehicle search on demand. The portal requires an exact normalized plate match and one effective registration at the capture time. It displays registered owner, colour and a readable make if the search or corroborating detail response provides one. It discards owner IDs and phone numbers, and leaves recipient confirmation to the operator. Register credentials are scoped separately from capture polling.
