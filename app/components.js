@@ -11,7 +11,7 @@ export async function operator() {
 }
 
 export function Shell({ current, session, children }) {
-  const pages = [['/', 'Review queue'], ['/cameras', 'Cameras'], ['/audit', 'Audit log']];
+  const pages = [['/', 'Review queue'], ['/tickets', 'Speed tickets'], ['/cameras', 'Cameras'], ['/audit', 'Audit log']];
   return <div className="shell">
     <aside className="sidebar">
       <Link href="/" className="brand"><span className="mark" aria-hidden="true">M</span><span>Midpoint<small>Speed monitoring</small></span></Link>

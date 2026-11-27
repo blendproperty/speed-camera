@@ -9,6 +9,10 @@ An internal operator console for HikCentral vehicle passes, speed measurements a
 3. Open the photo, compare it with the plate, capture time and measured speed, then record an internal approval or dismissal with a reason.
 4. Download the approved CSV for administrative handoff. The export includes the provider capture ID, time, camera, plate, speed, applicable limit, photo SHA-256 and reviewer. Evidence is retrieved through the authenticated console. Approval does not issue a ticket or contact a driver.
 
+### Speed tickets
+
+Open **Approved captures** from **Speed tickets**, then select **Create speed ticket** on a reviewed capture. The same capture always opens the same reference. The notice pulls the timing, plate, camera, speed, limit and evidence from the approved capture. Verify the recipient and applicable site rule before finalizing the draft. **Print / save PDF** uses the browser's A4 print layout. A voided notice stays in the register with its reason and audit history. The register records internal notices and does not send them or collect payments.
+
 ## First VPS deployment
 
 Use a dedicated directory and keep the service private during setup. On the VPS, a Docker administrator runs:

@@ -2,6 +2,15 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 speed ticket register and printable notices
+
+- **Implementation.** Added an authenticated Speed tickets register, one ticket per eligible approved capture, generated references, a printable A4 site notice, and audited draft, finalize and void actions. The notice uses the approved capture and protected camera image, with recipient and applicable site rule confirmed by an operator. The document is a Midpoint site notice. Municipal statutory wording, payment and delivery are outside the current workflow.
+- **Testing.** The production Docker build and unit tests passed. The PostgreSQL smoke test passed for the existing review and CSV flow plus private register access, held capture rejection, duplicate create, draft notice and evidence URL, finalization controls, finalized edit refusal, register filtering, voiding and audit. The test uses synthetic captures. The portal provides a browser print layout; production PDF output and acceptance remain unverified.
+- **Commit and push.** The implementation and context are promoted to `main` and staged in the VPS checkout.
+- **Merge.** Direct fast-forward promotion to `main`.
+- **Deployment and configuration.** Live readback confirmed the previous browser sign-in fix is deployed, with `Referrer-Policy: same-origin`; the operator reports sign-in and CSV export work. The ticketing image requires a privileged build and recreation of the VPS web container. The database adds the new ticket table on initialization.
+- **Live production verification.** Live ticketing, genuine camera evidence, production backup and restore, operator acceptance, site enforcement and approved issue, delivery or payment rules remain open.
+
 ## 2026-11-27 browser sign-in origin fix
 
 - **Implementation.** Use the `same-origin` referrer policy so a native form POST to this app includes its own origin. The previous `no-referrer` policy caused the browser to send a null origin. The app continues to require the exact configured origin and CSRF tokens on authenticated actions.

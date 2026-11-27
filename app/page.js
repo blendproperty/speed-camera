@@ -18,8 +18,8 @@ export default async function Dashboard({ searchParams }) {
     database().query(`SELECT status,count(*)::int AS count FROM captures
       WHERE status IN ('pending','held','approved','unmeasured') GROUP BY status`),
     database().query(`SELECT c.id,c.captured_at,c.plate,c.speed_kmh,c.limit_kmh,c.status,
-        c.image_sha256,c.reviewed_by,c.review_note,m.name
-        FROM captures c JOIN cameras m ON m.code=c.camera_code
+        c.image_sha256,c.reviewed_by,c.review_note,m.name,t.id AS ticket_id
+        FROM captures c JOIN cameras m ON m.code=c.camera_code LEFT JOIN speed_tickets t ON t.capture_id=c.id
         WHERE ($1='all' OR ($1='review' AND c.status IN ('pending','held')) OR c.status=$1)
           AND ($2='' OR position(upper($2) in upper(c.plate))>0)
           AND ($3='' OR c.camera_code=$3)
@@ -77,6 +77,12 @@ export default async function Dashboard({ searchParams }) {
               </form>
             </details>}
             {c.reviewed_by && <small className="review-note">{c.reviewed_by} · {c.review_note}</small>}
+            {c.ticket_id ? <Link className="ticket-link" href={'/tickets/' + c.ticket_id}>Open speed ticket</Link>
+              : c.status === 'approved' && <form className="ticket-link" action="/api/actions/ticket-create" method="post">
+                <input type="hidden" name="csrf" value={session.csrf} />
+                <input type="hidden" name="id" value={c.id} />
+                <button className="secondary">Create speed ticket</button>
+              </form>}
           </td>
         </tr>)}</tbody>
       </table></div> : <div className="empty"><h2>No captures match</h2><p>{cameraRows.rowCount ? 'Change the filters or check the camera sync status.' : 'Add a camera to begin configuring the feed.'}</p><Link href="/cameras">View cameras</Link></div>}

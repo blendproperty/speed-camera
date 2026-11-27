@@ -61,9 +61,33 @@ try {
   const csv = await (await call('/api/export', { headers: { cookie } })).text();
   assert.match(csv, /Synthetic verification/);
   assert.doesNotMatch(csv, /SYNTHETIC 1/);
+  assert.equal((await call('/tickets')).status, 307);
+  assert.equal((await form('/api/actions/ticket-create', { id: held.id, csrf }, cookie)).status, 400);
+  const draft = await form('/api/actions/ticket-create', { id: pending.id, csrf }, cookie);
+  assert.equal(draft.status, 303);
+  const ticketPath = new URL(draft.headers.get('location')).pathname;
+  const ticketId = ticketPath.split('/').at(-1);
+  const repeat = await form('/api/actions/ticket-create', { id: pending.id, csrf }, cookie);
+  assert.equal(repeat.headers.get('location'), draft.headers.get('location'));
+  const draftNotice = await (await call(ticketPath, { headers: { cookie } })).text();
+  assert.match(draftNotice, /Draft · For internal review/);
+  assert.match(draftNotice, /Site speeding notice/);
+  assert.match(draftNotice, new RegExp('/api/evidence/' + pending.id));
+  const ticket = { id: ticketId, csrf, recipient: 'Synthetic recipient', rule: 'Test site rule',
+    noticeNote: 'Synthetic notice', operation: 'finalize' };
+  assert.equal((await form('/api/actions/ticket-update', ticket, cookie)).status, 400);
+  assert.equal((await form('/api/actions/ticket-update', { ...ticket, operation: 'save' }, cookie)).status, 303);
+  assert.equal((await form('/api/actions/ticket-update', { ...ticket, verified: 'on' }, cookie)).status, 303);
+  assert.equal((await form('/api/actions/ticket-update', { ...ticket, operation: 'save' }, cookie)).status, 400);
+  const finalized = await (await call('/tickets?status=finalized&q=SYNTHETIC', { headers: { cookie } })).text();
+  assert.match(finalized, /MP-S-/);
+  assert.match(await (await call(ticketPath, { headers: { cookie } })).text(), /Synthetic recipient/);
+  assert.equal((await form('/api/actions/ticket-update', { id: ticketId, csrf, operation: 'void', reason: 'Training fixture' }, cookie)).status, 303);
+  assert.match(await (await call(ticketPath, { headers: { cookie } })).text(), /Voided ·/);
   assert.match(await (await call('/audit', { headers: { cookie } })).text(), /capture approved/);
+  assert.match(await (await call('/audit', { headers: { cookie } })).text(), /speed ticket voided/);
   assert.equal((await form('/api/actions/logout', { csrf }, cookie)).status, 303);
-  console.log('Passed isolated smoke: health, login, CSRF, setup, dedup, evidence, held gate, review, CSV, audit, logout.');
+  console.log('Passed isolated smoke: health, login, CSRF, setup, dedup, evidence, review, CSV, ticket lifecycle, audit, logout.');
 } finally {
   await database().end();
 }

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { currentSession, readForm, sameOrigin, sessionName } from '../../../../lib/auth.mjs';
 import { initialize } from '../../../../lib/db.mjs';
 import { InputError, reviewCapture, saveCamera } from '../../../../lib/operations.mjs';
+import { createTicket, updateTicket } from '../../../../lib/tickets.mjs';
 
 export async function POST(request, { params }) {
   const { action } = await params;
@@ -16,11 +17,17 @@ export async function POST(request, { params }) {
     response.cookies.delete(sessionName);
     return response;
   }
-  if (!['camera', 'review'].includes(action)) return new Response('Not found', { status: 404 });
+  if (!['camera', 'review', 'ticket-create', 'ticket-update'].includes(action)) return new Response('Not found', { status: 404 });
   await initialize();
   try {
     if (action === 'camera') await saveCamera(form, session.username);
-    else await reviewCapture(form.get('id'), form, session.username);
+    else if (action === 'review') await reviewCapture(form.get('id'), form, session.username);
+    else {
+      const id = action === 'ticket-create'
+        ? await createTicket(form.get('id'), session.username)
+        : await updateTicket(form.get('id'), form, session.username);
+      return NextResponse.redirect(new URL('/tickets/' + id, process.env.PUBLIC_ORIGIN), 303);
+    }
   } catch (error) {
     if (!(error instanceof InputError)) throw error;
     return new Response(error.message, { status: 400, headers: { 'content-type': 'text/plain; charset=utf-8' } });

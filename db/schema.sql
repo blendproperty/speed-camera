@@ -30,6 +30,24 @@ CREATE TABLE IF NOT EXISTS captures (
 CREATE INDEX IF NOT EXISTS captures_review ON captures(status, captured_at DESC);
 CREATE INDEX IF NOT EXISTS captures_time ON captures(captured_at DESC, id DESC);
 
+CREATE TABLE IF NOT EXISTS speed_tickets (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  capture_id bigint NOT NULL UNIQUE REFERENCES captures(id),
+  created_by text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  camera_name text NOT NULL,
+  recipient text NOT NULL DEFAULT '',
+  rule_reference text NOT NULL DEFAULT '',
+  notice_note text NOT NULL DEFAULT '',
+  status text NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','finalized','void')),
+  finalized_by text,
+  finalized_at timestamptz,
+  voided_by text,
+  voided_at timestamptz,
+  void_reason text
+);
+CREATE INDEX IF NOT EXISTS speed_tickets_status ON speed_tickets(status, id DESC);
+
 CREATE TABLE IF NOT EXISTS audit (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   recorded_at timestamptz NOT NULL DEFAULT now(),
