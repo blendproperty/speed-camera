@@ -2,6 +2,15 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 HikCentral vehicle list expanded
+
+- **Implementation.** Added the 478 remaining registered vehicles to HikCentral list `1`, **Midpoint Speed Camera Pilot**, after the owner confirmed the expanded lookup scope.
+- **Testing.** Saved four batches of 100 and a final batch of 78. HikCentral list totals advanced from 2 to 102, 202, 302, 402 and 480.
+- **Commit and push.** This documentation-only entry records the production change. No application code changed.
+- **Merge.** No application merge required. The evidence is recorded on `main`.
+- **Deployment and configuration.** Updated the live HikCentral list membership. The Apply List to Camera control was left untouched. No application deployment or configuration change was required.
+- **Live production verification.** HikCentral showed 480 list members and zero remaining entries in Add Vehicle. The prior signed lookup remains the verified API example. Lookup against a newly added plate, a genuine capture and in-portal draft lookup, the next scheduled EMS import, vehicle make availability and operator acceptance remain open.
+
 ## 2026-11-27 signed VPS register lookup verified
 
 - **Implementation.** No application changes. The existing portal verifier and pinned HikCentral connection were exercised inside the running VPS web container.
