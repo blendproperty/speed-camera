@@ -2,6 +2,15 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 Speed-Cameras partner permission readback
+
+- **Implementation.** Read-only inspection of the new HikCentral partner. No code changes were required.
+- **Testing.** The live partner editor showed `Speed-Cameras` linked to `admin`, with 230 authorized APIs. The two vehicle lookup operations are already checked. Add, update and delete vehicle permissions were also checked, so this is broader than the requested read-only integration. The form was closed without saving.
+- **Commit and push.** This evidence-only update is promoted to `main` and staged in the VPS checkout.
+- **Merge.** Direct fast-forward of documentation.
+- **Deployment and configuration.** No partner, credential or portal settings changed. The VPS still timed out connecting to the proposed port 4443.
+- **Live production verification.** Read-only partner scope, the separate certificate and listener, the vehicle group ID and signed lookup remain open. All existing EMS, capture and acceptance gates remain in place.
+
 ## 2026-11-27 approved HikCentral DNS name
 
 - **Implementation.** Updated the administrator handoff with the approved hostname, proposed separate Artemis listener, existing EMS origin, VPS source address and exact read paths.
