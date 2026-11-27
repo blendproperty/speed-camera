@@ -15,6 +15,8 @@ sudo docker compose -f compose.yaml -f compose.traefik.yaml exec web node script
 
 Enter the **Integration Partner Key** as AppKey, the **Integration Partner Secret** as AppSecret, and the actual vehicle group ID. The key and secret prompts hide input. The script writes the configuration to `secrets/operators/hikcentral-register.json`, mode 600, readable by the portal service through its read-only mount. No change to the HikCentral listener or EMS configuration is needed. The portal verifies the exact certificate on every new connection. If the certificate rotates, independently confirm the replacement fingerprint and rerun the setup.
 
+The pilot group is **Midpoint Speed Camera Pilot**, ID `1`. It contains one approved test vehicle. A signed gateway search and detail lookup matched that vehicle and returned its registered owner and colour. Neither response included a make. The pilot group only covers its current members.
+
 ## Certificate
 
 The EMS feed and Midpoint currently reach the same listener. The existing certificate is self-signed, names `127.0.0.1`, and has no Subject Alternative Name for the VPS-facing address.

@@ -2,6 +2,15 @@
 
 Last updated 2026-11-27 (Africa/Johannesburg).
 
+## 2026-11-27 one-vehicle HikCentral group pilot
+
+- **Implementation.** Created the ordinary **Midpoint Speed Camera Pilot** list and assigned only the approved test vehicle. No application code changed.
+- **Testing.** The UI readback showed one member, the same vehicle tested previously. The signed group-list request returned group ID `1`. Signed advanced search returned code 0 and exactly one exact match. The signed vehicle detail call also returned code 0 for the same plate. Both returned owner and colour. Neither returned a make. No vehicle or owner identifiers were copied into this record.
+- **Commit and push.** This gateway evidence is promoted directly to `main` and staged in the VPS checkout.
+- **Merge.** Documentation-only fast-forward promotion.
+- **Deployment and configuration.** Changes were limited to the new HikCentral list and the one vehicle assignment. The list was not applied to a camera. No EMS, shared listener, certificate, partner or VPS web settings changed.
+- **Live production verification.** EMS health returned HTTP 200 before and after. Its active daily OpenAPI importer last succeeded on run `19940` at 05:18 SAST, before the list change. The next scheduled post-change import remains unverified. Before enabling the VPS lookup, independently confirm the certificate fingerprint, configure the scoped partner with group ID `1`, and verify the exact portal response. Broader fleet scope, make availability and prior operator/data gates remain open.
+
 ## 2026-11-27 ungrouped plate lookup check
 
 - **Implementation.** Read-only diagnosis. The portal continues to require a vehicle group selector.
